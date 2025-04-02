@@ -36,9 +36,7 @@ class Boxer:
     weight_class: str = None
 
     def __post_init__(self):
-        """Initializes the weight class with an automatically assigned class based on the weight.
-
-        """
+      
         self.weight_class = get_weight_class(self.weight)  # Automatically assign weight class
 
 
@@ -61,16 +59,19 @@ def create_boxer(name: str, weight: int, height: int, reach: float, age: int) ->
     """
     logger.info(f"received request to add boxer: {name}, weight: {weight}, height: {height}, reach: {reach}, age: {age}")
 
-    if weight < 125:
+    if not isinstance(name, str) or not name.strip():
+        logger.warning(f"Invalid name provided: {name}.")
+        raise ValueError(f"Invalid name: {name}. Must be a string.")
+    if not isinstance(weight, int) or weight < 125:
         logger.warning(f"Invalid weight provided: {weight}.")
         raise ValueError(f"Invalid weight: {weight}. Must be at least 125.")
-    if height <= 0:
+    if not isinstance(height, int) or height <= 0:
         logger.warning(f"Invalid height provided: {height}.")
         raise ValueError(f"Invalid height: {height}. Must be greater than 0.")
-    if reach <= 0:
+    if not isinstance(reach, float) or reach <= 0:
         logger.warning(f"Invalid reach provided: {reach}.")
         raise ValueError(f"Invalid reach: {reach}. Must be greater than 0.")
-    if not (18 <= age <= 40):
+    if not isinstance(age, int) or (18 <= age <= 40):
         logger.warning(f"Invalid age provided: {age}.")
         raise ValueError(f"Invalid age: {age}. Must be between 18 and 40.")
 
@@ -115,6 +116,10 @@ def delete_boxer(boxer_id: int) -> None:
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
+
+            if not isinstance(boxer_id, int):
+                logger.error(f"Invalid type: boxer_id is not an integer.")
+                raise TypeError(f"Invalid type: Expected 'int', got '{type(boxer_id).__name__}'")
 
             cursor.execute("SELECT id FROM boxers WHERE id = ?", (boxer_id,))
             if cursor.fetchone() is None:
@@ -165,6 +170,10 @@ def get_leaderboard(sort_by: str = "wins") -> List[dict[str, Any]]:
             cursor.execute(query)
             rows = cursor.fetchall()
 
+        if not rows:
+            logger.info("No boxers found in the database.")
+            return []
+
         leaderboard = []
         for row in rows:
             boxer = {
@@ -207,6 +216,11 @@ def get_boxer_by_id(boxer_id: int) -> Boxer:
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
+
+            if not isinstance(boxer_id, int):
+                logger.error(f"Invalid type: boxer_id is not an integer.")
+                raise TypeError(f"Invalid type: Expected 'int', got '{type(boxer_id).__name__}'")
+
             logger.info(f"Attempting to retrieve boxer with ID: {boxer_id}")
             cursor.execute("""
                 SELECT id, name, weight, height, reach, age
@@ -248,6 +262,12 @@ def get_boxer_by_name(boxer_name: str) -> Boxer:
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
+
+            if not isinstance(boxer_name, str) or not boxer_name.strip():
+                logger.error(f"Invalid type: boxer_name is not a valid string.")
+                raise TypeError(f"Invalid type: Expected 'str', got '{type(boxer_name).__name__}'")
+            
+
             logger.info(f"Attempting to retrieve boxer with name: {boxer_name}")
             cursor.execute("""
                 SELECT id, name, weight, height, reach, age
@@ -283,6 +303,10 @@ def get_weight_class(weight: int) -> str:
 
     """
 
+    if not isinstance(weight, int):
+        logger.error(f"Invalid type: weight is not an integer.")
+        raise TypeError(f"Invalid type: Expected 'int', got '{type(weight).__name__}'")
+
     logger.info(f"Calculating weight class for weight: {weight}")
 
     if weight >= 203:
@@ -315,7 +339,12 @@ def update_boxer_stats(boxer_id: int, result: str) -> None:
 
     """
     if result not in {'win', 'loss'}:
+        logger.error(f"Invalid result provided: {result}.")
         raise ValueError(f"Invalid result: {result}. Expected 'win' or 'loss'.")
+    
+    if not isinstance(boxer_id, int):
+        logger.error(f"Invalid type: boxer_id is not an integer.")
+        raise TypeError(f"Invalid type: Expected 'int', got '{type(boxer_id).__name__}'")
 
     try:
         with get_db_connection() as conn:
