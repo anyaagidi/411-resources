@@ -47,16 +47,18 @@ check_db() {
 
 
 create_boxer() {
-    name=$1
-    weight=$2
-    height=$3
-    reach=$4
-    age=$5
+    id = $1
+    name=$2
+    weight=$3
+    height=$4
+    reach=$5
+    age=$6
 
-    echo "Creating boxer with name: $name, weight: $weight, height: $height, reach: $reach, age: $age"
+    echo "Creating boxer with id: $id, name: $name, weight: $weight, height: $height, reach: $reach, age: $age"
     curl -s -X POST "$BASE_URL/boxers" \
         -H "Content-Type: application/json" \
         -d '{
+            "id": "'"$id"'",
             "name": "'"$name"'",
             "weight": '"$weight"',
             "height": '"$height"',
@@ -221,5 +223,28 @@ check_db
 # Create boxers
 create_boxer "Boxer 1" 180 75 10.0 25
 create_boxer "Boxer 2" 175 70 9.5 30
+create_boxer "Boxer 3" 185 80 11.0 28
+create_boxer "Boxer 4" 170 65 8.5 22
+
+delete_boxer 4
+
+get_boxer_by_id 1
+get_boxer_by_name "Boxer 2"
+
+get_weight_class 130
+
+enter_ring 1
+enter_ring 2
+
+get_boxers
+
+fight
+
+clear_ring
+get_leaderboard
+
+
+echo "All tests passed successfully."
+
 
 
