@@ -53,6 +53,7 @@ def create_boxer(name: str, weight: int, height: int, reach: float, age: int) ->
 
     Raises:
         ValueError: If qny field is invalid.
+        TypeError: If the name is not of the expected type.
         sqlite3.IntegrityError: If the boxer already exists.
         sqlite3.Error: If there is an error with the database.
 
@@ -61,7 +62,7 @@ def create_boxer(name: str, weight: int, height: int, reach: float, age: int) ->
 
     if not isinstance(name, str) or not name.strip():
         logger.warning(f"Invalid name provided: {name}.")
-        raise ValueError(f"Invalid name: {name}. Must be a string.")
+        raise TypeError(f"Invalid name: {name}. Must be a string.")
     if not isinstance(weight, int) or weight < 125:
         logger.warning(f"Invalid weight provided: {weight}.")
         raise ValueError(f"Invalid weight: {weight}. Must be at least 125.")
@@ -110,6 +111,7 @@ def delete_boxer(boxer_id: int) -> None:
 
         Raises:
             ValueError: If the boxer id is not found.
+            TypeError: If the boxer_id is not an integer.
             sqlite3.Error: If there is an error with the database.
 
     """
@@ -210,6 +212,7 @@ def get_boxer_by_id(boxer_id: int) -> Boxer:
 
     Raises:
         ValueError: If the boxer is not found.
+        TypeError: If the boxer_id is not an integer.
         sqlite3.Error: If there is an error with the database.
 
     """
@@ -256,6 +259,7 @@ def get_boxer_by_name(boxer_name: str) -> Boxer:
 
     Raises:
         ValueError: If the boxer is not found.
+        TypeError: If the boxer_name is not a valid string.
         sqlite3.Error: If there is an error with the database.
 
     """
@@ -300,6 +304,7 @@ def get_weight_class(weight: int) -> str:
 
     Raises:
         ValueError: If the weight is less than 125.
+        TypeError: If the weight is not an integer.
 
     """
 
@@ -335,6 +340,7 @@ def update_boxer_stats(boxer_id: int, result: str) -> None:
 
     Raises:
         ValueError: If the boxer ID is not found or if the result is invalid.
+        TypeError: If the boxer_id is not an integer.
         sqlite3.Error: If there is an error with the database.
 
     """

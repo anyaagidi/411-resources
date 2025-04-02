@@ -48,6 +48,18 @@ class RingModel:
 
         boxer_1, boxer_2 = self.get_boxers()
 
+        if boxer_1 == boxer_2:
+            logger.error("Both boxers are the same.")
+            raise ValueError("Both boxers are the same.")
+        
+        if not isinstance(boxer_1, Boxer) or not isinstance(boxer_2, Boxer):
+            logger.error("Invalid type: boxer is not a valid Boxer instance.")
+            raise TypeError("Invalid type: boxer is not a valid Boxer instance.")
+        
+        if not boxer_1 or not boxer_2:
+            logger.error("Boxer 1 or Boxer 2 is None.")
+            raise ValueError("Boxer 1 or Boxer 2 is None.")
+
         skill_1 = self.get_fighting_skill(boxer_1)
         skill_2 = self.get_fighting_skill(boxer_2)
 
