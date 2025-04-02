@@ -37,7 +37,10 @@ class RingModel:
 
         """
         if len(self.ring) < 2:
+            logger.error("Not enough boxers in the ring to start a fight.")
             raise ValueError("There must be two boxers to start a fight.")
+        
+        logger.info("Starting a fight between two boxers.")
 
         boxer_1, boxer_2 = self.get_boxers()
 
@@ -62,6 +65,8 @@ class RingModel:
         update_boxer_stats(loser.id, 'loss')
 
         self.clear_ring()
+        
+        logger.info(f"Fight finished. Winner: {winner.name}, Loser: {loser.name}")
 
         return winner.name
 
@@ -71,9 +76,13 @@ class RingModel:
         Clears all songs from the playlist.
 
         """
+
+        logger.info("Received request to clear the ring.")
+
         if not self.ring:
             return
         self.ring.clear()
+        logger.info("Ring cleared successfully.")
 
     def enter_ring(self, boxer: Boxer):
         """Adds a boxer to the ring.
@@ -86,13 +95,19 @@ class RingModel:
             ValueError: If the ring is full.
 
         """
+        logger.info("Received request to add a boxer to the ring.")
+
+
         if not isinstance(boxer, Boxer):
+            logger.error("Invalid type: boxer is not a valid Boxer instance.")
             raise TypeError(f"Invalid type: Expected 'Boxer', got '{type(boxer).__name__}'")
 
         if len(self.ring) >= 2:
+            logger.error("Ring is full, cannot add more boxers.")
             raise ValueError("Ring is full, cannot add more boxers.")
 
         self.ring.append(boxer)
+        logger.info(f"Boxer '{boxer.name}' added to the ring.")
 
     def get_boxers(self) -> List[Boxer]:
         """Returns a list of boxers in the ring.
@@ -101,11 +116,14 @@ class RingModel:
             List[Boxer]: A list of boxers currently in the ring.
 
         """
+        logger.info("retrieving boxers in the ring.")
+
         if not self.ring:
             pass
         else:
             pass
 
+        logger.info("Boxers retrieved successfully.")
         return self.ring
 
     def get_fighting_skill(self, boxer: Boxer) -> float:
@@ -118,8 +136,10 @@ class RingModel:
             float: The calculated fighting skill of the boxer.
 
         """
+        logger.info(f"Calculating fighting skill for boxer: {boxer.name}")
         # Arbitrary calculations
         age_modifier = -1 if boxer.age < 25 else (-2 if boxer.age > 35 else 0)
         skill = (boxer.weight * len(boxer.name)) + (boxer.reach / 10) + age_modifier
 
+        logger.info(f"Successfully retrieved fighting skill for boxer {boxer.name}: {skill}")
         return skill
